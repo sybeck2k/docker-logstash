@@ -9,25 +9,17 @@ input {
 filter {
   if [type] == "journal" {
     grok {
-      match => { "message" => "%{TIMESTAMP_ISO8601:syslog_timestamp} %{HOST} %{SYSLOGPROG}: %{GREEDYDATA:_remainder}" }
+      match => [ "message", "%{TIMESTAMP_ISO8601:logdate} %{HOST} %{SYSLOGPROG}:%{SPACE}%{GREEDYDATA:message_remainder}" ]
       add_tag => ["journal_grokked"]
+      overwrite => "message"
     }
-    mutate {
-      tags => [ "journal_grokked" ]
-      replace => [ "@message", "%{message_remainder}" ]
-    }
-    mutate {
-      tags => [ "journal_grokked" ]
-      remove => [ "message_remainder" ]
-    }
-    mutate {
-      tags => [ "journal_grokked" ]
-      replace => [ "@timestamp", "%{syslog_timestamp}" ]
-      add_tag => ["tmatch"]
-    }
-    mutate {
-      tags => [ "tmatch" ]
-      remove => [ "syslog_timestamp" ]
+
+    if "journal_grokked" in [tags] {
+      date {
+        match => [ "logdate", "ISO8601" ]
+        remove_field => [ "logdate" ]
+        add_tag => ["tmatch"]
+      }
     }
   }
 }

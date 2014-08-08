@@ -25,4 +25,4 @@ curl -L $ETCD/v2/keys/logstash/ssl_private_key -XPUT --data-urlencode value@/opt
 
 # Start logstash
 echo "[logstash] starting logstash agent..."
-/opt/logstash/bin/logstash agent -f /etc/logstash.conf
+/opt/logstash/bin/logstash agent --debug -f /etc/logstash.conf
