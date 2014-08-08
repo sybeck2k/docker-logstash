@@ -6,6 +6,15 @@ input {
   }
 }
 
+filter {
+  if [type] == "journal" {
+    grok {
+      match => { "message" => "%{TIMESTAMP_ISO8601:timestamp} %{HOST} %{SYSLOGPROG}: %{GREEDYDATA:message}" }
+      tag_on_failure => ["journal_irregular"]
+    }
+  }
+}
+
 output {
   elasticsearch {
     protocol => "http"
