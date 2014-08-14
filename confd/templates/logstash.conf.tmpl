@@ -9,7 +9,7 @@ input {
 filter {
   if [type] == "journal" {
     grok {
-      match => [ "message", "%{TIMESTAMP_ISO8601:logdate} %{HOST} %{SYSLOGPROG}:%{SPACE}%{GREEDYDATA:message_remainder}" ]
+      match => [ "message", "%{TIMESTAMP_ISO8601:logdate} %{HOST} %{SYSLOGPROG}:%{SPACE}%{GREEDYDATA:message}" ]
       add_tag => ["journal_grokked"]
       overwrite => "message"
     }
